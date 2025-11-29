@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { apiFetch } from '../../../lib/apiClient';
 import { useAuth } from '../../../lib/hooks/useAuth';
 import { Shell } from '../../../components/layouts/Shell';
@@ -41,9 +42,9 @@ export default function ClientPortalPage() {
               {p.reports.map((r: any) => (
                 <div key={r.id} className="flex justify-between text-sm">
                   <span>{r.title}</span>
-                  <a className="text-blue-600" href={`/reports/${r.id}`}>
+                  <Link className="text-blue-600" href={`/reports/${r.id}`}>
                     View
-                  </a>
+                  </Link>
                 </div>
               ))}
               {p.reports.length === 0 && <p className="text-sm text-gray-500">No published reports yet</p>}

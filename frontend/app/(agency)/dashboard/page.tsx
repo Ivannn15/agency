@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { apiFetch } from '../../../lib/apiClient';
 import { useAuth } from '../../../lib/hooks/useAuth';
 import { Shell } from '../../../components/layouts/Shell';
@@ -52,9 +53,9 @@ export default function DashboardPage() {
                   <p className="font-medium">{r.title}</p>
                   <p className="text-sm text-gray-500">{r.project?.client?.name}</p>
                 </div>
-                <a className="text-blue-600" href={`/reports/${r.id}`}>
+                <Link className="text-blue-600" href={`/reports/${r.id}`}>
                   View
-                </a>
+                </Link>
               </div>
             ))}
             {stats.reports.length === 0 && <p className="text-sm text-gray-500">No reports yet</p>}
