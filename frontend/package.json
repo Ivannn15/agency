@@ -16,6 +16,8 @@
     "postcss": "8.4.38"
   },
   "devDependencies": {
+
+    
     "typescript": "^5.3.3"
   }
 }
