@@ -19,6 +19,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
                     <Link href="/dashboard">Dashboard</Link>
                     <Link href="/clients">Clients</Link>
                     <Link href="/projects">Projects</Link>
+                    <Link href="/reports">Reports</Link>
                   </>
                 )}
                 {user.role === 'CLIENT' && <Link href="/portal">Portal</Link>}
@@ -28,7 +29,10 @@ export function Shell({ children }: { children: React.ReactNode }) {
           <div className="text-sm flex items-center gap-3">
             {user ? (
               <>
-                <span>{user.fullName}</span>
+                <div className="text-right leading-tight">
+                  <p className="font-semibold">{user.fullName}</p>
+                  <p className="text-gray-500 text-xs">{user.role.replace('_', ' ')}</p>
+                </div>
                 <button className="btn-secondary" onClick={logout}>
                   Logout
                 </button>
