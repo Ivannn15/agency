@@ -1,0 +1,131 @@
+// Prisma schema for AgencyRoom
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  AGENCY_OWNER
+  AGENCY_MANAGER
+  CLIENT
+}
+
+enum ClientStatus {
+  ACTIVE
+  PAUSED
+  ARCHIVED
+}
+
+enum ProjectStatus {
+  PLANNED
+  IN_PROGRESS
+  PAUSED
+  DONE
+}
+
+enum ReportStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  fullName     String
+  role         UserRole
+  agencyId     String?
+  clientId     String?
+  agency       Agency?   @relation(fields: [agencyId], references: [id])
+  client       Client?   @relation(fields: [clientId], references: [id])
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Agency {
+  id              String    @id @default(cuid())
+  name            String
+  subdomain       String?   @unique
+  logoUrl         String?
+  timezone        String    @default("UTC")
+  defaultCurrency String    @default("USD")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  users           User[]
+  clients         Client[]
+  projects        Project[]
+  reports         Report[]
+  attachments     FileAttachment[]
+}
+
+model Client {
+  id           String        @id @default(cuid())
+  agencyId     String
+  name         String
+  companyName  String?
+  contactEmail String?
+  contactPhone String?
+  status       ClientStatus @default(ACTIVE)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  agency       Agency       @relation(fields: [agencyId], references: [id])
+  projects     Project[]
+  clientUsers  User[]
+}
+
+model Project {
+  id          String        @id @default(cuid())
+  agencyId    String
+  clientId    String
+  name        String
+  description String?
+  status      ProjectStatus @default(PLANNED)
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  agency      Agency        @relation(fields: [agencyId], references: [id])
+  client      Client        @relation(fields: [clientId], references: [id])
+  reports     Report[]
+  attachments FileAttachment[]
+}
+
+model Report {
+  id          String        @id @default(cuid())
+  agencyId    String
+  projectId   String
+  title       String
+  periodStart DateTime
+  periodEnd   DateTime
+  status      ReportStatus  @default(DRAFT)
+  summary     String
+  highlights  String?
+  issues      String?
+  nextSteps   String?
+  kpisJson    Json?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  publishedAt DateTime?
+  agency      Agency        @relation(fields: [agencyId], references: [id])
+  project     Project       @relation(fields: [projectId], references: [id])
+  attachments FileAttachment[]
+}
+
+model FileAttachment {
+  id        String   @id @default(cuid())
+  agencyId  String
+  projectId String?
+  reportId  String?
+  fileName  String
+  fileUrl   String
+  mimeType  String?
+  createdAt DateTime @default(now())
+  agency    Agency   @relation(fields: [agencyId], references: [id])
+  project   Project? @relation(fields: [projectId], references: [id])
+  report    Report?  @relation(fields: [reportId], references: [id])
+}
